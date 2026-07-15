@@ -1,0 +1,4 @@
+dnspython
+ssl
+socket
+datetime
