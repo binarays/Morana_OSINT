@@ -1,0 +1,77 @@
+[
+    {
+        "scan_id": 1,
+        "time": "2026-07-15T22:49:06.273923",
+        "domain": "sltc.ac.lk",
+        "result": {
+            "DNSLookup": {
+                "scanner": "DNSLookup",
+                "target": "sltc.ac.lk",
+                "status": "success",
+                "data": {
+                    "A": [
+                        "141.193.213.10"
+                    ],
+                    "AAAA": [],
+                    "MX": [
+                        "5 ALT2.ASPMX.L.GOOGLE.COM.",
+                        "5 ALT1.ASPMX.L.GOOGLE.COM.",
+                        "10 ASPMX2.GOOGLEMAIL.COM.",
+                        "1 ASPMX.L.GOOGLE.COM.",
+                        "10 ASPMX3.GOOGLEMAIL.COM."
+                    ],
+                    "NS": [
+                        "ns1.sltc.ac.lk.",
+                        "ns2.ac.lk.",
+                        "ns1.ac.lk."
+                    ],
+                    "TXT": [
+                        "\"MS=02998156CFAD7D0C048CA0A003B034A702E8553F\"",
+                        "\"google-site-verification=BYrqDBeaR6Xe5ly4pCmRisrCKPHA6HxaE13_WBw2n8U\"",
+                        "\"v=spf1 include:_spf.google.com ~all\"",
+                        "\"google-site-verification=bu9AKdD42Kv461wWGEZlIc5HDSeeJO2T4mpzCj5MxGk\"",
+                        "\"google-site-verification=t7kiR8TIZICJjMhyLVGxFG38yG5zbpRe3lXw49tIipk\"",
+                        "\"vc-domain-verify=codemania-v5.sltc.ac.lk,0f667ee4677add064839\""
+                    ],
+                    "CNAME": [],
+                    "SOA": [
+                        "ns1.sltc.ac.lk. noc.sltc.ac.lk. 2026071502 3600 3600 3600000 3600"
+                    ]
+                }
+            },
+            "SSLLookup": {
+                "scanner": "SSLLookup",
+                "target": "sltc.ac.lk",
+                "status": "success",
+                "data": {
+                    "certificate_status": "certificate failed verification",
+                    "message": "[SSL: CERTIFICATE_VERIFY_FAILED] certificate verify failed: certificate has expired (_ssl.c:1081)"
+                }
+            },
+            "WhoisLookup": {
+                "scanner": "WhoisLookup",
+                "target": "sltc.ac.lk",
+                "status": "unavailable",
+                "message": "Registration data is not available in public sources",
+                "data": {}
+            },
+            "HeaderLookup": {
+                "scanner": "HeaderLookup",
+                "target": "sltc.ac.lk",
+                "status": "success",
+                "data": {
+                    "server": "cloudflare",
+                    "status_code": 200,
+                    "security_headers": {
+                        "Strict-Transport-Security": "Missing",
+                        "Content-Security-Policy": "Missing",
+                        "X-Frame-Options": "Missing",
+                        "X-Content-Type-Options": "Missing",
+                        "Referrer-Policy": "Missing",
+                        "Permissions-Policy": "Missing"
+                    }
+                }
+            }
+        }
+    }
+]

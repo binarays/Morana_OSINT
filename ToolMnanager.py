@@ -1,18 +1,38 @@
-from tools.dnslookup import dnstool
-from tools.ssllookup import ssltool
+from tools.dnslookup import DNSLookup
+from tools.ssllookup import SSLLookup
+from tools.portlookup import PortLookup
+from tools.whoislookup import WhoisLookup
+from tools.httphederlookup import HeaderLookup
+'''
+from tools.technologylookup import TechnologyLookup
+from tools.robotslookup import RobotsLookup
+from tools.sitemaplookup import SitemapLookup
+from tools.crawler import Crawler'''
+
 
 class ToolManager:
 
+
     def __init__(self, domain):
-        self.tools=[
-            dnstool(domain),
-            ssltool(domain)
+
+        self.tools = [
+
+            DNSLookup(domain),
+            SSLLookup(domain),
+            #PortLookup(domain),
+            WhoisLookup(domain),
+            HeaderLookup(domain)
         ]
-    
+
+
     def scan(self):
-        result=[]
+
+        result = {}
+
 
         for tool in self.tools:
-            result[tool.__class__.__name__]=tool.scan()
+
+            result[tool.__class__.__name__] = tool.scan()
+
 
         return result
