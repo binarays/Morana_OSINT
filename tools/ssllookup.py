@@ -2,7 +2,7 @@ import ssl
 import socket
 from datetime import datetime
 
-class ssltool:
+class ssllookup:
 
     def __init__(self,domain):
         self.host=domain

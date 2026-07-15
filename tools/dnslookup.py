@@ -1,6 +1,6 @@
 import dns.resolver
 
-class dnstool:
+class dnslookup:
     records=["A","AAAA","MX","NS","TXT","CNAME","SOA"]
 
     def __init__(self,domain):
