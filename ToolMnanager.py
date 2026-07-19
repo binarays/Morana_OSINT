@@ -3,11 +3,10 @@ from tools.ssllookup import SSLLookup
 from tools.portlookup import PortLookup
 from tools.whoislookup import WhoisLookup
 from tools.httphederlookup import HeaderLookup
-'''
-from tools.technologylookup import TechnologyLookup
-from tools.robotslookup import RobotsLookup
+from tools.techlookup import TechLookup
+from tools.botlookup import RobotsLookup
 from tools.sitemaplookup import SitemapLookup
-from tools.crawler import Crawler'''
+from tools.crawlerlookup import Crawler
 
 
 class ToolManager:
@@ -21,7 +20,11 @@ class ToolManager:
             SSLLookup(domain),
             #PortLookup(domain),
             WhoisLookup(domain),
-            HeaderLookup(domain)
+            HeaderLookup(domain),
+            TechLookup(domain),
+            RobotsLookup(domain),
+            SitemapLookup(domain),
+            Crawler(domain)
         ]
 
 

@@ -2,7 +2,7 @@ import requests
 from bs4 import BeautifulSoup
 
 
-class TechnologyLookup:
+class TechLookup:
 
 
     def __init__(self, domain):
