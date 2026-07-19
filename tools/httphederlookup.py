@@ -6,7 +6,7 @@ class HeaderLookup:
 
     security_headers = [
 
-        "Strict-Transport-Security",
+        "Strict-Transport-HSTS",
         "Content-Security-Policy",
         "X-Frame-Options",
         "X-Content-Type-Options",
@@ -37,7 +37,8 @@ class HeaderLookup:
 
             response = requests.get(
                 url,
-                timeout=10
+                timeout=10,
+                allow_redirects=True
             )
 
 
@@ -53,18 +54,101 @@ class HeaderLookup:
             result["status_code"] = response.status_code
 
 
+
+            # Check HTTPS redirect
+
+            result["https_status"] = {}
+
+            if response.url.startswith("https://"):
+
+                result["https_status"] = {
+
+                    "status": "secure",
+
+                    "message": "HTTPS enabled"
+
+                }
+
+            else:
+
+                result["https_status"] = {
+
+                    "status": "warning",
+
+                    "severity": "Medium",
+
+                    "message": "HTTPS not enforced"
+
+                }
+
+
+
             result["security_headers"] = {}
+
+
+            result["security_findings"] = []
+
 
 
             for header in self.security_headers:
 
+
                 if header in headers:
+
 
                     result["security_headers"][header] = "Present"
 
+
+
                 else:
 
+
                     result["security_headers"][header] = "Missing"
+
+
+
+                    severity = "Low"
+
+
+                    if header == "Content-Security-Policy":
+
+                        severity = "Medium"
+
+
+                    elif header == "Strict-Transport-Security":
+
+                        severity = "Medium"
+
+
+
+                    result["security_findings"].append({
+
+                        "header": header,
+
+                        "status": "Missing",
+
+                        "severity": severity,
+
+                        "message": f"{header} header is missing"
+
+                    })
+
+
+
+            # Server information disclosure
+
+            if result["server"] != "Unknown":
+
+
+                result["security_findings"].append({
+
+                    "finding": "Server Version Disclosure",
+
+                    "severity": "Low",
+
+                    "message": "Server header exposes information"
+
+                })
 
 
 
@@ -79,6 +163,7 @@ class HeaderLookup:
                 "data": result
 
             }
+
 
 
         except Exception as e:

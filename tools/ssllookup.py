@@ -91,6 +91,7 @@ class SSLLookup:
                     ).days
 
 
+
                     if result["days_remaining"] < 0:
 
                         result["certificate_status"] = "certificate expired"
@@ -98,6 +99,116 @@ class SSLLookup:
                     else:
 
                         result["certificate_status"] = "certificate valid"
+
+
+
+                    # Security checks
+
+                    result["security_checks"] = {}
+
+
+
+                    # TLS Version Check
+
+                    if result["tls_version"] in [
+                        "TLSv1",
+                        "TLSv1.1"
+                    ]:
+
+                        result["security_checks"]["tls_version"] = {
+                            "status": "weak",
+                            "severity": "Medium",
+                            "message": "Old TLS version detected"
+                        }
+
+                    else:
+
+                        result["security_checks"]["tls_version"] = {
+                            "status": "secure",
+                            "severity": "None",
+                            "message": "Modern TLS version"
+                        }
+
+
+
+                    # Cipher Check
+
+                    cipher_name = result["cipher"][0]
+
+
+                    weak_ciphers = [
+
+                        "RC4",
+                        "DES",
+                        "3DES",
+                        "NULL",
+                        "EXPORT"
+
+                    ]
+
+
+                    cipher_status = "secure"
+
+
+                    for cipher in weak_ciphers:
+
+                        if cipher in cipher_name:
+
+                            cipher_status = "weak"
+
+
+
+                    if cipher_status == "weak":
+
+                        result["security_checks"]["cipher"] = {
+
+                            "status": "weak",
+
+                            "severity": "Medium",
+
+                            "message": "Weak cipher detected"
+
+                        }
+
+                    else:
+
+                        result["security_checks"]["cipher"] = {
+
+                            "status": "secure",
+
+                            "severity": "None",
+
+                            "message": "Secure cipher"
+
+                        }
+
+
+
+                    # Certificate Expiry Check
+
+                    if result["days_remaining"] < 30:
+
+                        result["security_checks"]["certificate_expiry"] = {
+
+                            "status": "warning",
+
+                            "severity": "Medium",
+
+                            "message": "Certificate expires soon"
+
+                        }
+
+                    else:
+
+                        result["security_checks"]["certificate_expiry"] = {
+
+                            "status": "secure",
+
+                            "severity": "None",
+
+                            "message": "Certificate validity is good"
+
+                        }
 
 
 

@@ -1,6 +1,7 @@
 from tools.dnslookup import DNSLookup
 from tools.ssllookup import SSLLookup
-from tools.portlookup import PortLookup
+from tools.portlookup.fullportlookup import FullPortLookup
+from tools.portlookup.quickportlookup import QuickPortLookup
 from tools.whoislookup import WhoisLookup
 from tools.httphederlookup import HeaderLookup
 from tools.techlookup import TechLookup
@@ -18,7 +19,6 @@ class ToolManager:
 
             DNSLookup(domain),
             SSLLookup(domain),
-            #PortLookup(domain),
             WhoisLookup(domain),
             HeaderLookup(domain),
             TechLookup(domain),
@@ -26,6 +26,21 @@ class ToolManager:
             SitemapLookup(domain),
             Crawler(domain)
         ]
+
+        if PortLookupType == "full":
+
+            self.tools.insert(
+                2,
+                FullPortLookup(domain)
+            )
+
+
+        else:
+
+            self.tools.insert(
+                2,
+                QuickPortLookup(domain)
+            )
 
 
     def scan(self):

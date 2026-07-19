@@ -2,7 +2,7 @@ import socket
 from concurrent.futures import ThreadPoolExecutor
 
 
-class PortLookup:
+class FullPortLookup:
 
 
     def __init__(self, domain):
@@ -62,7 +62,7 @@ class PortLookup:
 
 
         with ThreadPoolExecutor(
-            max_workers=100
+            max_workers=500
         ) as executor:
 
 

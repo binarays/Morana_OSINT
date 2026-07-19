@@ -15,9 +15,13 @@ class Crawler:
 
         self.visited = set()
 
+        self.forms = []
+
+        self.pages = {}
 
 
-    def crawl_page(self, url):
+
+    def crawl_page(self, url, callback=None):
 
 
         if url in self.visited:
@@ -26,6 +30,13 @@ class Crawler:
 
 
         self.visited.add(url)
+
+
+        if callback:
+
+            callback(
+                f"Crawling: {url}"
+            )
 
 
         links = []
@@ -40,10 +51,44 @@ class Crawler:
             )
 
 
+            self.pages[url] = {
+
+                "status_code":
+                response.status_code
+
+            }
+
+
             soup = BeautifulSoup(
                 response.text,
                 "html.parser"
             )
+
+
+
+            # Find forms for future vulnerability scanning
+
+            for form in soup.find_all(
+                "form"
+            ):
+
+                self.forms.append({
+
+                    "url": url,
+
+                    "method":
+                    form.get(
+                        "method",
+                        "GET"
+                    ),
+
+                    "action":
+                    form.get(
+                        "action"
+                    )
+
+                })
+
 
 
             for link in soup.find_all(
@@ -58,11 +103,38 @@ class Crawler:
                 )
 
 
-                if urlparse(full_url).netloc == urlparse(url).netloc:
+                parsed_url = urlparse(
+                    full_url
+                )
 
-                    links.append(
-                        full_url
-                    )
+
+                current_domain = urlparse(
+                    url
+                ).netloc
+
+
+
+                # Same domain only
+
+                if parsed_url.netloc == current_domain:
+
+
+                    # Ignore files
+
+                    if not full_url.lower().endswith(
+                        (
+                            ".jpg",
+                            ".png",
+                            ".pdf",
+                            ".zip",
+                            ".css",
+                            ".js"
+                        )
+                    ):
+
+                        links.append(
+                            full_url
+                        )
 
 
         except Exception:
@@ -74,7 +146,7 @@ class Crawler:
 
 
 
-    def scan(self):
+    def scan(self, callback=None):
 
 
         try:
@@ -83,13 +155,16 @@ class Crawler:
             url = self.domain
 
 
-            if not url.startswith("http"):
+            if not url.startswith(
+                "http"
+            ):
 
                 url = "https://" + url
 
 
 
             queue = [url]
+
 
 
             while queue and len(self.visited) < 100:
@@ -99,13 +174,25 @@ class Crawler:
 
 
                 new_links = self.crawl_page(
-                    current
+                    current,
+                    callback
                 )
 
 
-                queue.extend(
-                    new_links
-                )
+                for link in new_links:
+
+
+                    if (
+
+                        link not in self.visited
+
+                        and link not in queue
+
+                    ):
+
+                        queue.append(
+                            link
+                        )
 
 
 
@@ -120,7 +207,15 @@ class Crawler:
                 "data":{
 
                     "pages_found":
-                    list(self.visited)
+                    list(self.visited),
+
+
+                    "page_details":
+                    self.pages,
+
+
+                    "forms":
+                    self.forms
 
                 }
 
