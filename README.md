@@ -4,19 +4,50 @@
 
 Morana is an **OSINT** tool that we can use to gather infromation about target domain like *abc.com*. This tool will help us in the reconnaissance stage according to the **Cyber kill chain** & **cyber attack chain**.
 
-## Why we need this ?
+## Features
 
-- If you are a SOC analyst you can scan the particular domain and find what are the vulnerabilities your website or web app curently facing.
+- DNS Lookup
+- Port Scanner
+- SSL Scanner
+- WHOIS Scanner
+- HTTP/HTTPS Header Scanner
+- Sitemap Scanner
+- Technology Scanner
+- Report Generator
 
-- If you are a Hacker you can scan the particular domain and find what are the vulnerabilities that website or web app curently facing.
 
-## Technologies & Concept
+## Installation & Use
 
-- Python
-- OOP
-    > This will help to reduce the code complexity and easy to bug fixing.
-- React
-    > this will help to build modern ui for the app.
+installation i very simple,
+- Download the Morana
+    - Click Code Button
+    - Select Download ZIP
+    - Extract the ZIP file
 
-This is enough for now i will add more in the future.
+- Run the Morana.exe
 
+## Acknowledgements
+
+Special thanks to the maintainers and contributors of the following open-source projects:
+
+- Requests
+- Beautiful Soup 4
+- DNS Python
+- SSL
+- Socket
+- Datetime
+- WHOIS
+
+Your work made this project possible.
+
+## Disclaimer
+
+This tool is intended for authorized security testing only.
+
+Users are responsible for ensuring they have permission to scan any target. The author is not responsible for misuse or illegal activities.
+
+## Author
+
+[Binara wijewickrama](https://github.com/binarays)
+
+Copyright (c) 2026 Binara Wijewickrama

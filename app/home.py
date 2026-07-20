@@ -11,10 +11,11 @@ from PyQt6.QtWidgets import (
     QTableWidget,
     QTableWidgetItem,
     QHeaderView,
-    QFrame
+    QFrame,
+    QRadioButton
 )
 from PyQt6.QtCore import Qt, QSize
-from PyQt6.QtGui import QFont, QIcon
+from PyQt6.QtGui import QFont, QIcon, QColor
 
 from sub.worker import ScanWorker
 from utils.story import HistoryManager
@@ -23,12 +24,14 @@ STYLESHEET = """
 QWidget {
     background-color: #1e1e1e;
     color: #e0e0e0;
-    font-family: 'Segoe UI', Arial, sans-serif;
+    font-family: 'Poppins', 'Segoe UI', Arial, sans-serif;
 }
 
 /* Left Panel */
-#leftPanel {
+#leftPanel, #leftPanel QWidget {
     background-color: #252526;
+}
+#leftPanel {
     border-right: 1px solid #333333;
 }
 
@@ -40,19 +43,22 @@ QWidget {
 }
 
 #newScanBtn {
-    background-color: #007acc;
+    background-color: transparent;
     color: white;
     border: none;
     padding: 10px;
-    border-radius: 5px;
-    font-weight: bold;
-    margin: 10px;
+    padding-left: 15px;
+    text-align: left;
+    font-size: 14px;
+    border-radius: 0px;
+    font-weight: normal;
+    margin: 5px;
 }
 #newScanBtn:hover {
-    background-color: #0098ff;
+    background-color: #2d2d30;
 }
 #newScanBtn:pressed {
-    background-color: #005f9e;
+    background-color: #37373d;
 }
 
 QListWidget {
@@ -64,6 +70,9 @@ QListWidget::item {
     padding: 10px;
     border-bottom: 1px solid #333333;
 }
+QListWidget::item:hover {
+    background-color: #2d2d30;
+}
 QListWidget::item:selected {
     background-color: #37373d;
     color: #ffffff;
@@ -74,7 +83,7 @@ QLineEdit {
     background-color: #3c3c3c;
     border: 1px solid #555555;
     padding: 12px;
-    border-radius: 6px;
+    border-radius: 0px;
     font-size: 16px;
     color: white;
 }
@@ -86,9 +95,9 @@ QLineEdit:focus {
     background-color: #007acc;
     color: white;
     border: none;
-    padding: 12px 24px;
-    border-radius: 6px;
-    font-size: 16px;
+    padding: 10px 15px;
+    border-radius: 0px;
+    font-size: 14px;
     font-weight: bold;
 }
 #startScanBtn:hover {
@@ -100,9 +109,19 @@ QLineEdit:focus {
 }
 
 #statusLabel {
-    font-size: 18px;
-    color: #cccccc;
+    font-size: 13px;
+    color: #888888;
     margin-top: 20px;
+    font-style: italic;
+}
+
+QRadioButton {
+    font-size: 12px;
+    color: #cccccc;
+}
+QRadioButton::indicator {
+    width: 12px;
+    height: 12px;
 }
 #spinnerLabel {
     font-size: 24px;
@@ -172,12 +191,31 @@ QScrollBar::add-page:horizontal,
 QScrollBar::sub-page:horizontal {
     background: none;
 }
+
+QRadioButton {
+    color: #e0e0e0;
+    font-size: 14px;
+}
+QRadioButton::indicator {
+    width: 16px;
+    height: 16px;
+    border-radius: 8px;
+    border: 2px solid #555555;
+    background-color: transparent;
+}
+QRadioButton::indicator:checked {
+    background-color: #007acc;
+    border: 4px solid #1e1e1e;
+}
+QRadioButton::indicator:hover {
+    border: 2px solid #007acc;
+}
 """
 
 class MainWindow(QWidget):
     def __init__(self):
         super().__init__()
-        self.setWindowTitle("Morana OSINT - Vulnerability Scanner")
+        self.setWindowTitle("Morana")
         self.resize(1000, 700)
         self.setStyleSheet(STYLESHEET)
         self.history_manager = HistoryManager()
@@ -198,24 +236,99 @@ class MainWindow(QWidget):
         left_layout = QVBoxLayout(self.left_panel)
         left_layout.setContentsMargins(0, 10, 0, 0)
         
-        logo_label = QLabel("Morana OSINT")
-        logo_label.setObjectName("logoLabel")
-        logo_label.setAlignment(Qt.AlignmentFlag.AlignCenter)
+        title_container = QWidget()
+        title_hlayout = QHBoxLayout(title_container)
+        title_hlayout.setContentsMargins(15, 0, 15, 0)
         
-        self.new_scan_btn = QPushButton("+ New Scan")
+        from PyQt6.QtGui import QPixmap
+        logo_png = QLabel()
+        logo_pixmap = QPixmap("app/icons/morana-logo.png")
+        logo_png.setPixmap(logo_pixmap.scaled(28, 28, Qt.AspectRatioMode.KeepAspectRatio, Qt.TransformationMode.SmoothTransformation))
+        logo_png.setFixedSize(28, 28)
+        
+        logo_label = QLabel("")
+        logo_label.setStyleSheet("font-size: 18px; font-weight: bold; color: #ffffff;")
+        
+        from PyQt6.QtSvgWidgets import QSvgWidget
+        burger_btn = QSvgWidget("app/icons/burger-menu.svg")
+        burger_btn.setFixedSize(20, 20)
+        burger_btn.setCursor(Qt.CursorShape.PointingHandCursor)
+        
+        title_hlayout.addWidget(logo_png)
+        title_hlayout.addWidget(logo_label)
+        title_hlayout.addStretch()
+        title_hlayout.addWidget(burger_btn)
+        
+        left_layout.addWidget(title_container)
+        
+        # horizontal separator below header
+        header_separator = QFrame()
+        header_separator.setFrameShape(QFrame.Shape.HLine)
+        header_separator.setFixedHeight(1)
+        header_separator.setStyleSheet("background-color: #2a2a2a; border: none; margin: 8px 0px 0px 0px;")
+        left_layout.addWidget(header_separator)
+        
+        self.new_scan_btn = QPushButton("  Scan Now")
+        from PyQt6.QtGui import QIcon
+        self.new_scan_btn.setIcon(QIcon("app/icons/scan-white.svg"))
         self.new_scan_btn.setObjectName("newScanBtn")
         self.new_scan_btn.clicked.connect(self.show_initial_view)
+        self.new_scan_btn.setCursor(Qt.CursorShape.PointingHandCursor)
         
-        history_label = QLabel("  Recent Scans")
-        history_label.setStyleSheet("color: #888888; font-size: 12px; margin-top: 10px;")
+        history_header_widget = QWidget()
+        history_header_layout = QHBoxLayout(history_header_widget)
+        history_header_layout.setContentsMargins(10, 10, 15, 6)
+        
+        history_label = QLabel("History")
+        history_label.setStyleSheet("color: #ffffff; font-size: 12px; font-weight: normal;")
+        
+        from PyQt6.QtSvgWidgets import QSvgWidget
+        history_icon = QSvgWidget("app/icons/history.svg")
+        history_icon.setFixedSize(16, 16)
+        
+        history_header_layout.addWidget(history_label)
+        history_header_layout.addStretch()
+        history_header_layout.addWidget(history_icon)
         
         self.history_list = QListWidget()
         self.history_list.itemClicked.connect(self.on_history_clicked)
+        self.history_list.setCursor(Qt.CursorShape.PointingHandCursor)
         
-        left_layout.addWidget(logo_label)
+        legal_container = QWidget()
+        legal_hlayout = QHBoxLayout(legal_container)
+        legal_hlayout.setContentsMargins(0, 0, 15, 0)
+        
+        self.legal_btn = QPushButton("Legal information")
+        self.legal_btn.setStyleSheet("background: transparent; color: #666666; border: none; font-size: 11px; text-align: left; padding: 15px;")
+        self.legal_btn.setCursor(Qt.CursorShape.PointingHandCursor)
+        self.legal_btn.clicked.connect(self.show_legal_view)
+        
+        version_label = QLabel("Version 1.0")
+        version_label.setStyleSheet("color: #666666; font-size: 11px;")
+        
+        legal_hlayout.addWidget(self.legal_btn)
+        legal_hlayout.addStretch()
+        legal_hlayout.addWidget(version_label)
+        
+        
         left_layout.addWidget(self.new_scan_btn)
-        left_layout.addWidget(history_label)
+        
+        sep1 = QFrame()
+        sep1.setFrameShape(QFrame.Shape.HLine)
+        sep1.setFixedHeight(1)
+        sep1.setStyleSheet("background-color: #2a2a2a; border: none;")
+        left_layout.addWidget(sep1)
+        
+        left_layout.addWidget(history_header_widget)
         left_layout.addWidget(self.history_list)
+        
+        sep2 = QFrame()
+        sep2.setFrameShape(QFrame.Shape.HLine)
+        sep2.setFixedHeight(1)
+        sep2.setStyleSheet("background-color: #2a2a2a; border: none;")
+        left_layout.addWidget(sep2)
+        
+        left_layout.addWidget(legal_container)
         
         # ================= RIGHT PANEL =================
         self.right_panel = QStackedWidget()
@@ -225,42 +338,70 @@ class MainWindow(QWidget):
         initial_layout = QVBoxLayout(self.page_initial)
         initial_layout.setAlignment(Qt.AlignmentFlag.AlignCenter)
         
-        title_label = QLabel("Start a new scan")
-        title_label.setStyleSheet("font-size: 28px; font-weight: bold; margin-bottom: 20px;")
+        from datetime import datetime
+        _hour = datetime.now().hour
+        if _hour < 12:
+            _greeting = "Good Morning, Traveler!"
+        elif _hour < 17:
+            _greeting = "Good Afternoon, Traveler!"
+        elif _hour < 21:
+            _greeting = "Good Evening, Traveler!"
+        else:
+            _greeting = "Good Night, Traveler!"
+        
+        title_label = QLabel(_greeting)
+        title_label.setStyleSheet("font-size: 28px; font-weight: normal; margin-bottom: 20px;")
         title_label.setAlignment(Qt.AlignmentFlag.AlignCenter)
         
-        input_layout = QHBoxLayout()
+        center_container = QWidget()
+        center_container.setFixedWidth(500)
+        center_layout = QVBoxLayout(center_container)
+        center_layout.setContentsMargins(0, 0, 0, 0)
+        center_layout.setSpacing(15)
+        
         self.domain_input = QLineEdit()
         self.domain_input.setPlaceholderText("Enter domain (e.g. example.com)")
-        self.domain_input.setFixedWidth(400)
         self.domain_input.returnPressed.connect(self.start_scan)
+        center_layout.addWidget(self.domain_input)
         
-        self.scan_button = QPushButton("Scan")
+        controls_layout = QHBoxLayout()
+        
+        self.scan_method_label = QLabel("Port scan Type: ")
+        self.scan_method_label.setStyleSheet("color: #cccccc; font-size: 12px; margin-right: 10px;")
+        
+        self.quick_scan_radio = QRadioButton("Quick Scan")
+        self.quick_scan_radio.setChecked(True)
+        self.full_scan_radio = QRadioButton("Full Scan")
+        
+        self.scan_button = QPushButton("  Scan Now")
+        self.scan_button.setIcon(QIcon("app/icons/scan-white.svg"))
+        self.scan_button.setIconSize(QSize(16, 16))
         self.scan_button.setObjectName("startScanBtn")
         self.scan_button.clicked.connect(self.start_scan)
+        self.scan_button.setCursor(Qt.CursorShape.PointingHandCursor)
         
-        input_layout.addStretch()
-        input_layout.addWidget(self.domain_input)
-        input_layout.addWidget(self.scan_button)
-        input_layout.addStretch()
+        controls_layout.addWidget(self.scan_method_label)
+        controls_layout.addWidget(self.quick_scan_radio)
+        controls_layout.addWidget(self.full_scan_radio)
+        controls_layout.addStretch()
+        controls_layout.addWidget(self.scan_button)
         
+        center_layout.addLayout(controls_layout)
+        
+        initial_layout.addStretch()
         initial_layout.addWidget(title_label)
-        initial_layout.addLayout(input_layout)
+        initial_layout.addWidget(center_container, alignment=Qt.AlignmentFlag.AlignCenter)
+        initial_layout.addStretch()
         
         # Page 1: Scanning View
         self.page_scanning = QWidget()
         scanning_layout = QVBoxLayout(self.page_scanning)
         scanning_layout.setAlignment(Qt.AlignmentFlag.AlignCenter)
         
-        self.spinner_label = QLabel("⚙️")
-        self.spinner_label.setObjectName("spinnerLabel")
-        self.spinner_label.setAlignment(Qt.AlignmentFlag.AlignCenter)
-        
         self.status_label = QLabel("Initializing scan...")
         self.status_label.setObjectName("statusLabel")
         self.status_label.setAlignment(Qt.AlignmentFlag.AlignCenter)
         
-        scanning_layout.addWidget(self.spinner_label)
         scanning_layout.addWidget(self.status_label)
         
         # Page 2: Results View
@@ -270,34 +411,114 @@ class MainWindow(QWidget):
         
         title_layout = QHBoxLayout()
         self.target_prefix_label = QLabel("TARGET : ")
-        self.target_prefix_label.setStyleSheet("font-size: 24px; font-weight: bold; color: white;")
+        self.target_prefix_label.setStyleSheet("font-size: 15px; font-weight: bold; color: #888888;")
         self.target_domain_label = QLabel("")
-        self.target_domain_label.setStyleSheet("font-size: 24px; font-weight: bold; color: #007acc;")
+        self.target_domain_label.setStyleSheet("font-size: 15px; font-weight: bold; color: #007acc;")
         
         title_layout.addWidget(self.target_prefix_label)
         title_layout.addWidget(self.target_domain_label)
         title_layout.addStretch()
         
+        self.btn_show_results = QPushButton("Results")
+        self.btn_show_findings = QPushButton("Vulnerabilities & Risks")
+        
+        self.active_tab_style = "background-color: #007acc; color: white; border-radius: 0px; padding: 8px 15px; font-weight: normal;"
+        self.inactive_tab_style = "background-color: #2d2d2d; color: #aaaaaa; border-radius: 0px; padding: 8px 15px; font-weight: normal;"
+        
+        self.btn_show_results.setStyleSheet(self.active_tab_style)
+        self.btn_show_findings.setStyleSheet(self.inactive_tab_style)
+        self.btn_show_results.setCursor(Qt.CursorShape.PointingHandCursor)
+        self.btn_show_findings.setCursor(Qt.CursorShape.PointingHandCursor)
+        
+        self.btn_show_results.clicked.connect(self.show_results_tab)
+        self.btn_show_findings.clicked.connect(self.show_findings_tab)
+        
+        title_layout.addWidget(self.btn_show_results)
+        title_layout.addWidget(self.btn_show_findings)
+        
         self.results_table = QTableWidget()
         self.results_table.setColumnCount(2)
         self.results_table.horizontalHeader().setVisible(False)
         self.results_table.verticalHeader().setVisible(False)
-        self.results_table.horizontalHeader().setSectionResizeMode(0, QHeaderView.ResizeMode.ResizeToContents)
+        self.results_table.horizontalHeader().setSectionResizeMode(0, QHeaderView.ResizeMode.Fixed)
+        self.results_table.setColumnWidth(0, 220)
         self.results_table.horizontalHeader().setSectionResizeMode(1, QHeaderView.ResizeMode.Stretch)
         self.results_table.setEditTriggers(QTableWidget.EditTrigger.NoEditTriggers)
         self.results_table.setSelectionBehavior(QTableWidget.SelectionBehavior.SelectRows)
         self.results_table.setWordWrap(True)
         
-        results_layout.addLayout(title_layout)
-        results_layout.addWidget(self.results_table)
+        self.findings_table = QTableWidget()
+        self.findings_table.setColumnCount(4)
+        self.findings_table.setHorizontalHeaderLabels(["Vulnerability / Risk", "Category", "Risk Level", "Description"])
+        self.findings_table.horizontalHeader().setVisible(True)
+        self.findings_table.verticalHeader().setVisible(False)
+        self.findings_table.horizontalHeader().setSectionResizeMode(0, QHeaderView.ResizeMode.Fixed)
+        self.findings_table.setColumnWidth(0, 220)
+        self.findings_table.horizontalHeader().setSectionResizeMode(1, QHeaderView.ResizeMode.Fixed)
+        self.findings_table.setColumnWidth(1, 150)
+        self.findings_table.horizontalHeader().setSectionResizeMode(2, QHeaderView.ResizeMode.Fixed)
+        self.findings_table.setColumnWidth(2, 100)
+        self.findings_table.horizontalHeader().setSectionResizeMode(3, QHeaderView.ResizeMode.Stretch)
+        self.findings_table.setEditTriggers(QTableWidget.EditTrigger.NoEditTriggers)
+        self.findings_table.setSelectionBehavior(QTableWidget.SelectionBehavior.SelectRows)
+        self.findings_table.setWordWrap(True)
         
+        self.tables_stack = QStackedWidget()
+        self.tables_stack.addWidget(self.results_table)
+        self.tables_stack.addWidget(self.findings_table)
+        
+        results_layout.addLayout(title_layout)
+        results_layout.addWidget(self.tables_stack)
+        
+        # Page 3: Legal Info
+        self.page_legal = QWidget()
+        legal_layout = QVBoxLayout(self.page_legal)
+        legal_layout.setAlignment(Qt.AlignmentFlag.AlignCenter)
+        
+        legal_title = QLabel("Legal Information")
+        legal_title.setStyleSheet("font-size: 24px; font-weight: bold; margin-bottom: 20px;")
+        legal_title.setAlignment(Qt.AlignmentFlag.AlignCenter)
+        
+        legal_text = QLabel(
+            "We don't collect anyone's personal information.\n"
+            "We only use publicly available resources to gather information about the target.\n\n"
+            "Please do not use these tools to harm anyone or perform malicious activities."
+        )
+        legal_text.setStyleSheet("font-size: 14px; color: #cccccc; line-height: 1.5;")
+        legal_text.setAlignment(Qt.AlignmentFlag.AlignCenter)
+        
+        self.btn_legal_back = QPushButton(" Back to Scanner")
+        self.btn_legal_back.setIcon(QIcon("app/icons/back.svg"))
+        self.btn_legal_back.setStyleSheet("background-color: transparent; color: #007acc; font-weight: bold; border: 1px solid #007acc; padding: 10px 20px; font-size: 14px;")
+        self.btn_legal_back.setCursor(Qt.CursorShape.PointingHandCursor)
+        self.btn_legal_back.clicked.connect(self.show_initial_view)
+        
+        legal_layout.addStretch()
+        legal_layout.addWidget(legal_title)
+        legal_layout.addWidget(legal_text)
+        legal_layout.addWidget(self.btn_legal_back, alignment=Qt.AlignmentFlag.AlignCenter)
+        legal_layout.addStretch()
+
         # Add pages to stack
         self.right_panel.addWidget(self.page_initial)
         self.right_panel.addWidget(self.page_scanning)
         self.right_panel.addWidget(self.page_results)
+        self.right_panel.addWidget(self.page_legal)
         
         main_layout.addWidget(self.left_panel)
         main_layout.addWidget(self.right_panel)
+    def show_legal_view(self):
+        self.right_panel.setCurrentWidget(self.page_legal)
+
+    def show_results_tab(self):
+        self.tables_stack.setCurrentWidget(self.results_table)
+        self.btn_show_results.setStyleSheet(self.active_tab_style)
+        self.btn_show_findings.setStyleSheet(self.inactive_tab_style)
+
+    def show_findings_tab(self):
+        self.tables_stack.setCurrentWidget(self.findings_table)
+        self.btn_show_results.setStyleSheet(self.inactive_tab_style)
+        self.btn_show_findings.setStyleSheet(self.active_tab_style)
 
     def delete_history_item(self, scan_id):
         self.history_manager.delete_scan(scan_id)
@@ -387,7 +608,9 @@ class MainWindow(QWidget):
         self.scan_button.setEnabled(False)
         self.status_label.setText(f"Preparing to scan {domain}...")
 
-        self.worker = ScanWorker(domain)
+        port_scan_type = "full" if self.full_scan_radio.isChecked() else "quick"
+
+        self.worker = ScanWorker(domain, port_scan_type)
         self.worker.progress.connect(self.update_status)
         self.worker.finished.connect(self.scan_finished)
         self.worker.start()
@@ -413,10 +636,98 @@ class MainWindow(QWidget):
             self.target_prefix_label.hide()
             self.target_domain_label.setText("SCAN RESULTS")
             
+        import re
+        def format_key(key):
+            if not isinstance(key, str): key = str(key)
+            key = re.sub(r'[^a-zA-Z0-9\s]', ' ', key.replace('_', ' '))
+            key = " ".join(key.split())
+            if key: return key[0].upper() + key[1:].lower()
+            return key
+
+        def create_value_widget(val):
+            if isinstance(val, dict):
+                html = "<table cellpadding='2'>"
+                for k, v in val.items():
+                    html += f"<tr><td style='color:#aaaaaa; padding-right:15px; font-weight:bold;'>{format_key(k)}</td><td>{v}</td></tr>"
+                html += "</table>"
+                lbl = QLabel(html)
+                lbl.setWordWrap(True)
+                lbl.setStyleSheet("background: transparent;")
+                return lbl
+            elif isinstance(val, list) and any(isinstance(i, dict) for i in val):
+                html = ""
+                for item in val:
+                    if isinstance(item, dict):
+                        html += "<table cellpadding='2' style='margin-bottom:8px; border-bottom:1px solid #333; width:100%;'>"
+                        for k, v in item.items():
+                            html += f"<tr><td style='color:#aaaaaa; padding-right:15px; font-weight:bold; width:120px;'>{format_key(k)}</td><td>{v}</td></tr>"
+                        html += "</table>"
+                    else:
+                        html += f"<div style='margin-bottom:8px;'>{item}</div>"
+                lbl = QLabel(html)
+                lbl.setWordWrap(True)
+                lbl.setStyleSheet("background: transparent;")
+                return lbl
+            return None
+
+        def format_value(val):
+            if isinstance(val, list):
+                return "\n".join(map(str, val))
+            return str(val)
+
         self.results_table.setRowCount(0)
+        self.findings_table.setRowCount(0)
+        self.show_results_tab()
+        
+        scanner_order = {
+            "DNSLookup": 1,
+            "SSLLookup": 2,
+            "QuickPortLookup": 3,
+            "FullPortLookup": 3,
+            "HeaderLookup": 4,
+            "WhoisLookup": 5,
+            "TechLookup": 6,
+            "RobotsLookup": 7,
+            "SitemapLookup": 8,
+            "Crawler": 9
+        }
+        
+        ordered_results = sorted(result_dict.items(), key=lambda x: scanner_order.get(x[0], 99))
         
         row_idx = 0
-        for scanner_name, details in result_dict.items():
+        findings_row_idx = 0
+        for scanner_name, details in ordered_results:
+            if scanner_name == "Findings":
+                if not details:
+                    self.findings_table.insertRow(findings_row_idx)
+                    self.findings_table.setItem(findings_row_idx, 0, QTableWidgetItem("No vulnerabilities or risks found"))
+                    for c in range(1, 4): self.findings_table.setItem(findings_row_idx, c, QTableWidgetItem(""))
+                    findings_row_idx += 1
+                    continue
+                    
+                for finding in details:
+                    self.findings_table.insertRow(findings_row_idx)
+                    title = finding.get("title", "")
+                    category = finding.get("category", "")
+                    severity = finding.get("severity", "")
+                    desc = finding.get("description", "")
+                    
+                    self.findings_table.setItem(findings_row_idx, 0, QTableWidgetItem(title))
+                    self.findings_table.setItem(findings_row_idx, 1, QTableWidgetItem(category))
+                    
+                    sev_item = QTableWidgetItem(severity)
+                    if severity.lower() in ["high", "critical"]:
+                        sev_item.setForeground(Qt.GlobalColor.red)
+                    elif severity.lower() == "medium":
+                        sev_item.setForeground(QColor("orange"))
+                    elif severity.lower() == "low":
+                        sev_item.setForeground(Qt.GlobalColor.green)
+                        
+                    self.findings_table.setItem(findings_row_idx, 2, sev_item)
+                    self.findings_table.setItem(findings_row_idx, 3, QTableWidgetItem(desc))
+                    findings_row_idx += 1
+                continue
+
             display_name = scanner_name
             if display_name == "DNSLookup":
                 display_name = "DNS Records"
@@ -427,10 +738,6 @@ class MainWindow(QWidget):
             elif display_name == "HeaderLookup":
                 display_name = "HTTP Headers"
                 
-            scanner_status = "success"
-            if isinstance(details, dict):
-                scanner_status = details.get("status", "success")
-
             # Add a section header for the scanner
             self.results_table.insertRow(row_idx)
             header_item = QTableWidgetItem(display_name)
@@ -438,14 +745,7 @@ class MainWindow(QWidget):
             header_item.setForeground(Qt.GlobalColor.white)
             header_item.setFont(QFont("Segoe UI", 10, QFont.Weight.Bold))
             self.results_table.setItem(row_idx, 0, header_item)
-            
-            if scanner_status == "success" or scanner_status == "Completed":
-                status_item = QTableWidgetItem("🟢")
-            else:
-                status_item = QTableWidgetItem("🔴")
-                
-            status_item.setBackground(Qt.GlobalColor.black)
-            self.results_table.setItem(row_idx, 1, status_item)
+            self.results_table.setSpan(row_idx, 0, 1, 2)
             row_idx += 1
             
             # Format the output logic based on the tool
@@ -453,8 +753,30 @@ class MainWindow(QWidget):
                 for k, v in details.items():
                     if k in ["target", "status", "scanner"]:
                         continue
+                    if v in [None, "", [], {}]:
+                        continue
                     if isinstance(v, dict):
                         for sub_k, sub_v in v.items():
+                            if sub_v in [None, "", [], {}]:
+                                continue
+                            if sub_k == "forms":
+                                continue
+                            if sub_k == "page_details" and isinstance(sub_v, dict):
+                                new_sub_v = {}
+                                for url, info in sub_v.items():
+                                    if isinstance(info, dict) and "status_code" in info:
+                                        code = info["status_code"]
+                                        if code == 200: text = "<span style='color:#00ff00;'>200 - OK (Available)</span>"
+                                        elif code == 404: text = "<span style='color:#ff0000;'>404 - Not Found</span>"
+                                        elif code == 403: text = "<span style='color:#ff0000;'>403 - Forbidden</span>"
+                                        elif code >= 500: text = f"<span style='color:#ff0000;'>{code} - Server Error</span>"
+                                        elif str(code).startswith('3'): text = f"<span style='color:#ffa500;'>{code} - Redirect</span>"
+                                        else: text = str(code)
+                                        new_sub_v[url] = text
+                                    else:
+                                        new_sub_v[url] = str(info)
+                                sub_v = new_sub_v
+                                
                             if isinstance(sub_v, dict):
                                 # Two-level nested: e.g. security_headers
                                 self.results_table.insertRow(row_idx)
@@ -467,50 +789,73 @@ class MainWindow(QWidget):
                                     self.results_table.insertRow(row_idx)
                                     self.results_table.setItem(row_idx, 0, QTableWidgetItem(f"  {deep_k}"))
                                     dv_str = str(deep_v)
-                                    dv_item = QTableWidgetItem(dv_str)
-                                    if dv_str.lower() == "missing":
-                                        dv_item.setForeground(Qt.GlobalColor.red)
-                                    elif dv_str.lower() == "present":
-                                        dv_item.setForeground(Qt.GlobalColor.green)
-                                    self.results_table.setItem(row_idx, 1, dv_item)
+                                    if "<span" in dv_str or "<div" in dv_str:
+                                        lbl = QLabel(dv_str)
+                                        lbl.setWordWrap(True)
+                                        lbl.setStyleSheet("background: transparent;")
+                                        self.results_table.setItem(row_idx, 1, QTableWidgetItem(""))
+                                        self.results_table.setCellWidget(row_idx, 1, lbl)
+                                    else:
+                                        dv_item = QTableWidgetItem(dv_str)
+                                        if dv_str.lower() == "missing":
+                                            dv_item.setForeground(Qt.GlobalColor.red)
+                                        elif dv_str.lower() == "present":
+                                            dv_item.setForeground(Qt.GlobalColor.green)
+                                        self.results_table.setItem(row_idx, 1, dv_item)
                                     row_idx += 1
                             else:
                                 self.results_table.insertRow(row_idx)
                                 self.results_table.setItem(row_idx, 0, QTableWidgetItem(str(sub_k)))
-                                if isinstance(sub_v, list):
-                                    val_str = "\n".join(map(str, sub_v))
+                                widget = create_value_widget(sub_v)
+                                if widget:
+                                    self.results_table.setItem(row_idx, 1, QTableWidgetItem(""))
+                                    self.results_table.setCellWidget(row_idx, 1, widget)
                                 else:
-                                    val_str = str(sub_v)
-                                val_item = QTableWidgetItem(val_str)
-                                self.results_table.setItem(row_idx, 1, val_item)
+                                    val_str = format_value(sub_v)
+                                    val_item = QTableWidgetItem(val_str)
+                                    self.results_table.setItem(row_idx, 1, val_item)
                                 row_idx += 1
                         continue
 
                     self.results_table.insertRow(row_idx)
                     self.results_table.setItem(row_idx, 0, QTableWidgetItem(str(k)))
                     
-                    if isinstance(v, list):
-                        v_str = "\n".join(map(str, v))
+                    widget = create_value_widget(v)
+                    if widget:
+                        self.results_table.setItem(row_idx, 1, QTableWidgetItem(""))
+                        self.results_table.setCellWidget(row_idx, 1, widget)
                     else:
-                        v_str = str(v)
-                        
-                    val_item = QTableWidgetItem(v_str)
-                    if v_str.lower() in ["high", "critical", "vulnerable", "invalid", "false", "failed", "expired", "certificate expired"]:
-                        val_item.setForeground(Qt.GlobalColor.red)
-                    elif v_str.lower() in ["certificate valid", "valid"]:
-                        val_item.setForeground(Qt.GlobalColor.green)
-                    self.results_table.setItem(row_idx, 1, val_item)
+                        v_str = format_value(v)
+                        val_item = QTableWidgetItem(v_str)
+                        if v_str.lower() in ["high", "critical", "vulnerable", "invalid", "false", "failed", "expired", "certificate expired"]:
+                            val_item.setForeground(Qt.GlobalColor.red)
+                        elif v_str.lower() in ["certificate valid", "valid"]:
+                            val_item.setForeground(Qt.GlobalColor.green)
+                        self.results_table.setItem(row_idx, 1, val_item)
                     row_idx += 1
             elif isinstance(details, list):
+                if not details: continue
                 self.results_table.insertRow(row_idx)
                 self.results_table.setItem(row_idx, 0, QTableWidgetItem("Details"))
-                self.results_table.setItem(row_idx, 1, QTableWidgetItem("\n".join(map(str, details))))
+                widget = create_value_widget(details)
+                if widget:
+                    self.results_table.setItem(row_idx, 1, QTableWidgetItem(""))
+                    self.results_table.setCellWidget(row_idx, 1, widget)
+                else:
+                    self.results_table.setItem(row_idx, 1, QTableWidgetItem(format_value(details)))
                 row_idx += 1
             else:
+                if details in [None, "", [], {}]: continue
                 self.results_table.insertRow(row_idx)
                 self.results_table.setItem(row_idx, 0, QTableWidgetItem("Output"))
-                self.results_table.setItem(row_idx, 1, QTableWidgetItem(str(details)))
+                widget = create_value_widget(details)
+                if widget:
+                    self.results_table.setItem(row_idx, 1, QTableWidgetItem(""))
+                    self.results_table.setCellWidget(row_idx, 1, widget)
+                else:
+                    self.results_table.setItem(row_idx, 1, QTableWidgetItem(format_value(details)))
                 row_idx += 1
                 
         self.results_table.resizeRowsToContents()
+        self.findings_table.resizeRowsToContents()
         self.right_panel.setCurrentWidget(self.page_results)

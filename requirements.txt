@@ -2,3 +2,5 @@ dnspython
 ssl
 socket
 datetime
+BeautifulSoup
+whois

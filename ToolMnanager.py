@@ -13,7 +13,7 @@ from tools.crawlerlookup import Crawler
 class ToolManager:
 
 
-    def __init__(self, domain):
+    def __init__(self, domain, PortLookupType="quick"):
 
         self.tools = [
 
