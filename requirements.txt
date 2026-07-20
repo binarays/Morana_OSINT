@@ -4,3 +4,4 @@ socket
 datetime
 BeautifulSoup
 whois
+PyQt

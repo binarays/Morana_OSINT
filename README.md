@@ -2,7 +2,11 @@
 
 ## What is Morana ?
 
-Morana is an **OSINT** tool that we can use to gather infromation about target domain like *abc.com*. This tool will help us in the reconnaissance stage according to the **Cyber kill chain** & **cyber attack chain**.
+Morana is a **Web OSINT** tool that helps users collect publicly available information about a target domain, such as **abc.com**.
+
+It is designed to support the reconnaissance phase of security assessments by helping researchers discover details about a target's online presence. Morana assists in gathering useful intelligence during the early stages of the Cyber Kill Chain and the cyber attack lifecycle, helping security professionals better understand potential attack surfaces.
+
+Morana is built for **authorized** security testing, research, and educational purposes.
 
 ## Features
 
@@ -18,17 +22,17 @@ Morana is an **OSINT** tool that we can use to gather infromation about target d
 
 ## Installation & Use
 
-installation i very simple,
+installation is very simple,
 - Download the Morana
-    - Click Code Button
-    - Select Download ZIP
-    - Extract the ZIP file
+    - Click **Code Button**
+    - Select **Download ZIP**
+    - Extract the **ZIP file**
 
-- Run the Morana.exe
+- Run the **Morana.exe**
 
 ## Acknowledgements
 
-Special thanks to the maintainers and contributors of the following open-source projects:
+Special thanks to the maintainers and contributors of the following open source projects:
 
 - Requests
 - Beautiful Soup 4
