@@ -46,6 +46,13 @@ This tool is intended for authorized security testing only.
 
 Users are responsible for ensuring they have permission to scan any target. The author is not responsible for misuse or illegal activities.
 
+## License
+
+This project is available under :
+
+ -  GNU GPL v3
+
+
 ## Author
 
 [Binara wijewickrama](https://github.com/binarays)
