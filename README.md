@@ -1,4 +1,4 @@
-# Morana Develpers Se3ction
+# Morana Develpers Section
 If you’d like to join us and help make the app more useful, innovative, and user-friendly, this branch is the perfect place for you. We welcome your ideas, improvements, and contributions to help us create a better experience for everyone.
 
 ## Existing Features
