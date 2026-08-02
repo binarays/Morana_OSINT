@@ -74,4 +74,4 @@ This project is available under :
 
 [Binara wijewickrama](https://github.com/binarays)
 
-Copyright (c) 2026 Binara Wijewickrama
+Copyright (C) 2026 Original 2026 Binara Wijewickrama
