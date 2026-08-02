@@ -1,22 +1,7 @@
-<p align="center">
-  <img src="gitassets/morana banner.jpg" alt="moranabanner" width="100%">
-</p>
+# Morana Develpers Se3ction
+If you’d like to join us and help make the app more useful, innovative, and user-friendly, this branch is the perfect place for you. We welcome your ideas, improvements, and contributions to help us create a better experience for everyone.
 
-# Morana | Web Reconnaissance Console
-
-## What is Morana ?
-
-Morana is a **Web OSINT** tool that helps users collect publicly available information about a target domain, such as **abc.com**.
-
-It is designed to support the reconnaissance phase of security assessments by helping researchers discover details about a target's online presence. Morana assists in gathering useful intelligence during the early stages of the Cyber Kill Chain and the cyber attack lifecycle, helping security professionals better understand potential attack surfaces.
-
-Morana is built for **authorized** security testing, research, and educational purposes.
-
-<p align="center">
-  <img src="gitassets/moranaApp.png" alt="moranabanner" width="100%">
-</p>
-
-## Features
+## Existing Features
 
 - DNS Lookup
 - Port Scanner
@@ -28,20 +13,39 @@ Morana is built for **authorized** security testing, research, and educational p
 - Report Generator
 
 
-## Installation & Use
+## Development Environment Stup
 
-installation is very simple,
-- Download the Morana
-    - Check the **Releases**
-    - Select **Morana Web Scanner v1.0.0**
-    - Scroll to bottom
-    - Download the **Morana-Web-Scanner-v1.0.0-Windows.zip**
-    - Extract the **ZIP file**
+- Clone repository
+```
+git clone -b dev https://github.com/binarays/Morana_OSINT.git
+```
+- Then install essential libraries
+```
+pip install requirements.txt
+```
+- Congratualtion with your work
 
-- Run the **Morana.exe**
+## Author Note
+This project is licensed under the GPL-3.0 License. If you make any modifications, improvements, or updates to the code, please clearly document the changes you have made and provide proper attribution according to the license requirements.
 
-## Announcement
-- The Linux version is currently under development and is progressing impressively. We look forward to sharing more updates as development continues. Thank you for your patience and support!
+Please mention:
+  - What changes were made
+  - Which files or components were modified
+  - The purpose of each change
+  - Any new features or improvements added
+  - The date and author of the changes
+  ```
+  Changes Made:
+
+  Updated: [File/Component Name]
+  Added: [New Feature or Functionality]
+  Fixed: [Bug or Issue]
+  Improved: [Performance, UI, Documentation, etc.]
+
+  Modified By: [Your Name]
+  Date: [DD/MM/YYYY]
+  ```
+
 
 ## Acknowledgements
 
@@ -71,7 +75,6 @@ This project is available under :
 
 
 ## Author
-
 [Binara wijewickrama](https://github.com/binarays)
 
-Copyright (c) 2026 Binara Wijewickrama
+Copyright (C) 2026 Original Binara Wijewickrama
